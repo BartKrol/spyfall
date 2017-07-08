@@ -1,4 +1,5 @@
 # Spyfall
+Spyfall game implementation for slack
 
 **TODO: Add description**
 
