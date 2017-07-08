@@ -1,0 +1,69 @@
+defmodule Game do
+  def start_link do
+    Agent.start_link(fn -> Map.new end, name: __MODULE__)
+  end
+
+  def start(game_id) do
+    game = Agent.get(__MODULE__, &Map.get(&1, game_id))
+    if Enum.count(game.players) >= 2 do
+      spy = Enum.random(game.players)
+      location = Enum.random(locations())
+      Agent.update(__MODULE__,  &Map.put(&1, game_id, %{ game | :status => :starting, :spy => spy }))
+      { :ok, location, spy }
+    else
+      { :error, "Not enough players!" }
+    end
+  end
+
+  def add_player(game_id, player) do
+    Agent.update(__MODULE__, fn map -> 
+      game = Map.get(map, game_id)
+      Map.put(map, game_id, %{ game | :players => game.players ++ [player] })
+    end)
+  end
+
+  def register_game do
+    game_id = Enum.random(1..1000)
+    game = %{ status: :starting, players: [], spy: nil }
+    Agent.update(__MODULE__, &Map.put(&1, game_id, game))
+    game_id
+  end
+
+  def status(game_id) do
+    Agent.get(__MODULE__, &Map.get(&1, game_id))
+  end
+
+  # TODO: Move to config file
+  defp locations do 
+    [
+      "Airplane",
+      "Bank",
+      "Beach",
+      "Cathedral",
+      "Circus Tent",
+      "Corporate Party",
+      "Crusader Army",
+      "Casino",
+      "Day Spa",
+      "Embassy",
+      "Hospital",
+      "Hotel",
+      "Military Base",
+      "Movie Studio",
+      "Ocean Liner",
+      "Passenger Train",
+      "Pirate Ship",
+      "Polar Station",
+      "Police Station",
+      "Restaurant",
+      "School",
+      "Service Station",
+      "Space Station",
+      "Submarine",
+      "Supermarket",
+      "Theater",
+      "University",
+      "World War II Squad"
+    ]
+  end
+end
