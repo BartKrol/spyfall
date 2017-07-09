@@ -1,4 +1,5 @@
-defmodule Game do
+#TODO - refactor to storage
+defmodule Spyfall.Game do
   def start_link do
     Agent.start_link(fn -> Map.new end, name: __MODULE__)
   end
@@ -47,8 +48,7 @@ defmodule Game do
     end)
   end
 
-  def register_game do
-    game_id = Enum.random(1..1000)
+  def register_game(game_id) do
     game = %{ status: :starting, players: [], spy: nil, location: nil }
     Agent.update(__MODULE__, &Map.put(&1, game_id, game))
     game_id
