@@ -4,14 +4,14 @@ defmodule Spyfall.Game do
     Agent.start_link(fn -> Map.new end, name: __MODULE__)
   end
 
-  def start(game_id) do
+  def play(game_id) do
     game = Agent.get(__MODULE__, &Map.get(&1, game_id))
-    if Enum.count(game.players) >= 2 do
+    if Enum.count(game.players) >= 1 do
       spy = Enum.random(game.players)
       location = Enum.random(locations())
 
       Agent.update(__MODULE__, &Map.put(&1, game_id, %{ game | :status => :starting, :spy => spy, :location => location }))
-      { :ok, location, spy }
+      { :ok, location, spy, game.players }
     else
       { :error, "Not enough players!" }
     end
@@ -48,8 +48,8 @@ defmodule Spyfall.Game do
     end)
   end
 
-  def register_game(game_id) do
-    game = %{ status: :starting, players: [], spy: nil, location: nil }
+  def start(game_id) do
+    game = %{ status: :playing, players: [], spy: nil, location: nil }
     Agent.update(__MODULE__, &Map.put(&1, game_id, game))
     game_id
   end
