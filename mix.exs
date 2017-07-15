@@ -33,7 +33,8 @@ defmodule Spyfall.Mixfile do
   defp deps do
     [
       {:slack, "~> 0.12.0"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:distillery, "~> 1.4", runtime: false}
     ]
   end
 end
